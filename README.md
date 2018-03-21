@@ -10,4 +10,4 @@ id为自增主键类型为INT
 wages类型为DOUBLE
 所有列均非空
 以下为运行效果：
-<div align="center"> <img src="Images/效果演示1.png"/> </div><br>
+<div align="center"> <img src="JacoobH/StaffManage/tree/master/Images/效果演示1.png"/> </div><br>

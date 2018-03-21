@@ -4,7 +4,7 @@
 
 使用mysql作为数据库，第三方库JLayer用来播放背景音乐
 
-eclipse的插件windowbuilder编写UI，
+eclipse的插件windowbuilder编写UI，登陆界面用户名为hy，密码为123
 
 其中mysql用户名为root,密码为空，所连接的是本地数据库（127.0.0.1）
 

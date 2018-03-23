@@ -64,7 +64,7 @@ public class Login extends JFrame implements ActionListener{
 		contentPane.setLayout(null);
 		
 		title = new JLabel("\u5458\u5DE5\u7BA1\u7406");
-		title.setFont(new Font("Ó×Ô²", Font.PLAIN, 25));
+		title.setFont(new Font("å¹¼åœ†", Font.PLAIN, 25));
 		title.setBounds(162, 13, 100, 59);
 		contentPane.add(title);
 		
@@ -87,7 +87,10 @@ public class Login extends JFrame implements ActionListener{
 		
 		vcodePanel = new VerificationCode();
 		vcodePanel.setBounds(258, 159, 80, 40);
-		contentPane.add(vcodePanel);
+		//åŠ¨æ€åŠ å…¥ç»„ä»¶
+		SwingUtilities.invokeLater(()->{
+			contentPane.add(vcodePanel);
+		});
 		
 		vCode = new JTextField();
 		vCode.setColumns(10);
@@ -128,10 +131,15 @@ public class Login extends JFrame implements ActionListener{
 				});
 				this.dispose();
 			}
-			else if(scode.equals(code))
-				JOptionPane.showMessageDialog(this, "ÓÃ»§Ãû»òÃÜÂë´íÎó");
+			else if(scode.equals(code)){
+				JOptionPane.showMessageDialog(this, "ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯");
+				//é‡ç»˜ç»„ä»¶
+				vcodePanel.updateUI();
+			}
+				
 			else {
-				JOptionPane.showMessageDialog(this, "ÑéÖ¤Âë´íÎó");	
+				JOptionPane.showMessageDialog(this, "éªŒè¯ç é”™è¯¯");	
+				vcodePanel.updateUI();
 			}
 		}
 	

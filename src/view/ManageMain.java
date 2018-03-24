@@ -42,19 +42,19 @@ import javax.swing.UIManager;
 public class ManageMain extends JFrame{
 
 	private static final long serialVersionUID = 1L;
-	//ÄÚÈİÃæ°å
+	//å†…å®¹é¢æ¿
 	private JPanel contentPane;
 	
 	private JTable table;
 	private CardLayout card = new CardLayout();
 	private JPanel cardPanel;
 	private JTextField selectField;
-	//Êı¾İ¿â¶ÔÏó
+	//æ•°æ®åº“å¯¹è±¡
 	private DBConn db;
-	//´´½¨²¥·ÅÆ÷¶ÔÏó
+	//åˆ›å»ºæ’­æ”¾å™¨å¯¹è±¡
 	private MusicPlayer mp = MusicPlayer.makePlayer();
-	//µ±Ç°¸èÇú±àºÅ
-	private int index = 0;
+	//å½“å‰æ­Œæ›²ç¼–å·
+	public static int index = -1;
 	
 	private JTextField pID;
 	private JTextField pName;
@@ -81,86 +81,88 @@ public class ManageMain extends JFrame{
 	 */
 	public ManageMain() {
 		
-		//ÉèÖÃ´ËFrameÊôĞÔ
+		//è®¾ç½®æ­¤Frameå±æ€§
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1024,768);
-		//½«´ËFrame¾ÓÖĞ
+		//å°†æ­¤Frameå±…ä¸­
 		new mid(this);
+		//ä¸èƒ½è°ƒæ•´ç•Œé¢å¤§å°
+		setResizable(false);
 		
-		//ÄÚÈİÃæ°åÊôĞÔ
+		//å†…å®¹é¢æ¿å±æ€§
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		//µ÷ÓÃmenuInit()ÉèÖÃ²Ëµ¥À¸
+		//è°ƒç”¨menuInit()è®¾ç½®èœå•æ 
 		menuInit();
 		
-		//ÉèÖÃ¿¨Æ¬ÈİÆ÷
+		//è®¾ç½®å¡ç‰‡å®¹å™¨
 		cardPanel = new JPanel();
 		contentPane.add(cardPanel);
 		cardPanel.setLayout(card);
 		
-		//mainPanel×÷ÎªµÚÒ»ÕÅ¿¨Æ¬£¨Ö÷½çÃæ£©
+		//mainPanelä½œä¸ºç¬¬ä¸€å¼ å¡ç‰‡ï¼ˆä¸»ç•Œé¢ï¼‰
 		ImagePanel mainPanel = new ImagePanel("MainImage.jpg");
 		cardPanel.add(mainPanel, "card_main");
 		mainPanel.setLayout(new BorderLayout(0, 0));
 		
-		//µ÷ÓÃstaffPanel()·½·¨ÉèÖÃµÚ¶şÕÅ¿¨Æ¬
-		staffPanel();
+		//è°ƒç”¨staffPanel()æ–¹æ³•è®¾ç½®ç¬¬äºŒå¼ å¡ç‰‡
+		staffInit();
 		
-		//attendancePanel×÷ÎªµÚÈıÕÅ¿¨Æ¬
+		//attendancePanelä½œä¸ºç¬¬ä¸‰å¼ å¡ç‰‡
 		AttendancePanel attendancePanel = new AttendancePanel();
 		cardPanel.add(attendancePanel, "card_AttendancePanel");
 	}
-	public void staffPanel() {
+	public void staffInit() {
 		
-		//³õÊ¼»¯staffPanel²¢×÷ÎªµÚ¶şÕÅ¿¨Æ¬
+		//åˆå§‹åŒ–staffPanelå¹¶ä½œä¸ºç¬¬äºŒå¼ å¡ç‰‡
 		ImagePanel staffPanel = new ImagePanel("StaffImage.jpg");
 		cardPanel.add(staffPanel, "card_staff");
 		staffPanel.setLayout(null);
-		//³õÊ¼»¯tablePanel£¬²¢·Åµ½staffPanelÖĞ
+		//åˆå§‹åŒ–tablePanelï¼Œå¹¶æ”¾åˆ°staffPanelä¸­
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBounds(33, 92, 930, 423);
 		staffPanel.add(tablePanel);
 		tablePanel.setLayout(new BorderLayout(0, 0));
-		//ÉèÖÃJTableµÄÄ£ĞÍ
-		String[] title= {"#","ĞÕÃû","ĞÔ±ğ","²¿ÃÅ","¹¤×Ê","²Ù×÷"};
+		//è®¾ç½®JTableçš„æ¨¡å‹
+		String[] title= {"#","å§“å","æ€§åˆ«","éƒ¨é—¨","å·¥èµ„","æ“ä½œ"};
 		DefaultTableModel model=new DefaultTableModel(new String[20][6],title);
 		table = new JTable(model);
-		//table¼àÌı
+		//tableç›‘å¬
 		table.addMouseListener(new MouseAdapter() {
 			@Override
-			//Èç¹ûµã»÷table
+			//å¦‚æœç‚¹å‡»table
 			public void mousePressed(MouseEvent e) {
-				//ÅĞ¶ÏÊÇ·ñÓĞÊı¾İ
+				//åˆ¤æ–­æ˜¯å¦æœ‰æ•°æ®
 				if(table.getValueAt(table.getSelectedRow(), 0) != null ) {
-					//½«Ñ¡ÖĞĞĞµÄidÖµ¸³¸ø pID
+					//å°†é€‰ä¸­è¡Œçš„idå€¼èµ‹ç»™ pID
 					pID.setText(table.getValueAt(table.getSelectedRow(), 0).toString());
 				}
 				else
 					pID.setText("");
 			}
 		});
-		//ÉèÖÃJTableÄÚÈİ¾ÓÖĞ
+		//è®¾ç½®JTableå†…å®¹å±…ä¸­
 		DefaultTableCellRenderer r = new   DefaultTableCellRenderer();   
 		r.setHorizontalAlignment(JLabel.CENTER);   
 		table.setDefaultRenderer(Object.class,   r);
-		//ÉèÖÃJTableĞĞ¸ß
+		//è®¾ç½®JTableè¡Œé«˜
 		table.setRowHeight(30);
-		table.getColumnModel().getColumn(5).setCellEditor(new MyRender(table,model));//ÉèÖÃ±à¼­Æ÷
-		table.getColumnModel().getColumn(5).setCellRenderer(new MyRender(table,model));//µÃµ½ÁĞÀàĞÍ£¬µÃµ½Ö¸¶¨²ÎÊıµÄÀà£¬ÉèÖÃäÖÈ¾Æ÷
-		//Á¬½ÓÊı¾İ¿â
+		table.getColumnModel().getColumn(5).setCellEditor(new MyRender(table,model));//è®¾ç½®ç¼–è¾‘å™¨
+		table.getColumnModel().getColumn(5).setCellRenderer(new MyRender(table,model));//å¾—åˆ°åˆ—ç±»å‹ï¼Œå¾—åˆ°æŒ‡å®šå‚æ•°çš„ç±»ï¼Œè®¾ç½®æ¸²æŸ“å™¨
+		//è¿æ¥æ•°æ®åº“
 		db=new DBConn();
 		db.getRs(table,"SELECT * FROM staffList");
 		JScrollPane scrollPane = new JScrollPane(table);
-		//½«´ø¹öÂÖµÄtable·Åµ½tablePanelÖĞ
+		//å°†å¸¦æ»šè½®çš„tableæ”¾åˆ°tablePanelä¸­
 		tablePanel.add(scrollPane);
 		
 		
-		//°´Å¥£¨ĞÂÔö£©
+		//æŒ‰é’®ï¼ˆæ–°å¢ï¼‰
 		JButton bAdd = new JButton("\u65B0\u589E");
-		//£¨ĞÂÔö£©¼àÌı
+		//ï¼ˆæ–°å¢ï¼‰ç›‘å¬
 		bAdd.addActionListener((e)->{
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -174,18 +176,18 @@ public class ManageMain extends JFrame{
 			});
 		});
 		bAdd.setBounds(33, 13, 63, 27);
-		//½«bAdd·Åµ½staffPanelÖĞÈ¥
+		//å°†bAddæ”¾åˆ°staffPanelä¸­å»
 		staffPanel.add(bAdd);
 		
 		
-		//°´Å¥£¨É¾³ıËùÓĞÊı¾İ£©
+		//æŒ‰é’®ï¼ˆåˆ é™¤æ‰€æœ‰æ•°æ®ï¼‰
 		JButton bAllDelete = new JButton("\u5220\u9664\u6240\u6709\u6570\u636E");
 		bAllDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int n = JOptionPane.showConfirmDialog(null, "È·¶¨É¾³ıËùÓĞÊı¾İÂğ£¿", "ÌáÊ¾",JOptionPane.YES_NO_OPTION);
-				//nµÈÓÚ-1±íÊ¾¹Ø±ÕÁËµ¯³öµÄ¶Ô»°¿òµÈÇé¿öµÄÄ¬ÈÏÖµ
-	            //nµÈÓÚ0(JOptionPane.YES_OPTION)±íÊ¾Ñ¡ÔñÁËYes
-	            //nµÈÓÚ1(JOptionPane.NO_OPTION)±íÊ¾Ñ¡ÔñÁËNo
+				int n = JOptionPane.showConfirmDialog(null, "ç¡®å®šåˆ é™¤æ‰€æœ‰æ•°æ®å—ï¼Ÿ", "æç¤º",JOptionPane.YES_NO_OPTION);
+				//nç­‰äº-1è¡¨ç¤ºå…³é—­äº†å¼¹å‡ºçš„å¯¹è¯æ¡†ç­‰æƒ…å†µçš„é»˜è®¤å€¼
+	            //nç­‰äº0(JOptionPane.YES_OPTION)è¡¨ç¤ºé€‰æ‹©äº†Yes
+	            //nç­‰äº1(JOptionPane.NO_OPTION)è¡¨ç¤ºé€‰æ‹©äº†No
 				if(n==JOptionPane.YES_OPTION){
 					db = new DBConn();
 					model.setRowCount( 0 );
@@ -203,19 +205,19 @@ public class ManageMain extends JFrame{
 			}
 		});
 		bAllDelete.setBounds(144, 13, 140, 27);
-		//½«bAllDelete·Åµ½staffPanelÖĞÈ¥
+		//å°†bAllDeleteæ”¾åˆ°staffPanelä¸­å»
 		staffPanel.add(bAllDelete);
 		
 		
-		//²éÕÒ¿ò£¨ÇëÊäÈëÔ±¹¤ĞÅÏ¢...£©
+		//æŸ¥æ‰¾æ¡†ï¼ˆè¯·è¾“å…¥å‘˜å·¥ä¿¡æ¯...ï¼‰
 		selectField = new JTextField();
 		selectField.setText("\u8F93\u5165\u5458\u5DE5\u4FE1\u606F...");
 		selectField.setColumns(10);
 		selectField.setBounds(375, 14, 140, 24);
-		//½«selectField·Åµ½staffPanelÖĞÈ¥
+		//å°†selectFieldæ”¾åˆ°staffPanelä¸­å»
 		staffPanel.add(selectField);
 		
-		//°´Å¥£¨²éÕÒ£©
+		//æŒ‰é’®ï¼ˆæŸ¥æ‰¾ï¼‰
 		JButton bSearch = new JButton("\u67E5\u627E");
 		bSearch.addActionListener(new ActionListener() {
 			
@@ -231,75 +233,75 @@ public class ManageMain extends JFrame{
 		staffPanel.add(bSearch);
 		
 		
-		//²¿ÃÅÏÂÀ­¿ò
+		//éƒ¨é—¨ä¸‹æ‹‰æ¡†
 		JComboBox<Department> cBDpmtSelecct = new JComboBox<>();
 		cBDpmtSelecct.setModel(new DefaultComboBoxModel<>(Department.values()));
 		cBDpmtSelecct.setBounds(794, 14, 140, 24);
-		//¼àÌı
+		//ç›‘å¬
 		cBDpmtSelecct.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-//				ItemEvent·½·¨£º
+//				ItemEventæ–¹æ³•ï¼š
 //				Object getItem() 
-//				·µ»ØÊÜÊÂ¼şÓ°ÏìµÄÏî¡£ 
+//				è¿”å›å—äº‹ä»¶å½±å“çš„é¡¹ã€‚ 
 //				Object getItem() 
-//				·µ»ØÊÜÊÂ¼şÓ°ÏìµÄÏî¡£ 
+//				è¿”å›å—äº‹ä»¶å½±å“çš„é¡¹ã€‚ 
 //				ItemSelectable getItemSelectable() 
-//				·µ»ØÊÂ¼şµÄ²úÉú³ÌĞò¡£ 
+//				è¿”å›äº‹ä»¶çš„äº§ç”Ÿç¨‹åºã€‚ 
 //				int getStateChange() 
-//				·µ»Ø×´Ì¬¸ü¸ÄµÄÀàĞÍ£¨ÒÑÑ¡¶¨»òÒÑÈ¡ÏûÑ¡¶¨£©¡£ 
+//				è¿”å›çŠ¶æ€æ›´æ”¹çš„ç±»å‹ï¼ˆå·²é€‰å®šæˆ–å·²å–æ¶ˆé€‰å®šï¼‰ã€‚ 
 //		        String paramString() 
-//		              ·µ»Ø±êÊ¶´ËÏîÊÂ¼şµÄ²ÎÊı×Ö·û´®
+//		              è¿”å›æ ‡è¯†æ­¤é¡¹äº‹ä»¶çš„å‚æ•°å­—ç¬¦ä¸²
 				switch ((Department)e.getItem())
                 {
-                case È«²¿: 
+                case å…¨éƒ¨: 
                 	if(e.getStateChange()==1) {
                 		db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList");
                 		break;
                 	}
                     
-                case ¼¼Êõ²¿:
+                case æŠ€æœ¯éƒ¨:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
                 		model.setRowCount( 20 );
                 		db=new DBConn();
-                		db.getRs(table,"SELECT * FROM staffList WHERE department = '¼¼Êõ²¿'");
+                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'æŠ€æœ¯éƒ¨'");
                 		break;
                 	}
                     
-                case ²ÆÕş²¿:
+                case è´¢æ”¿éƒ¨:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
                         model.setRowCount( 20 );
                         db=new DBConn();
-                		db.getRs(table,"SELECT * FROM staffList WHERE department = '²ÆÕş²¿'");
+                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'è´¢æ”¿éƒ¨'");
                         break;
                 	}
                     
-                case ÔËÓª²¿:
+                case è¿è¥éƒ¨:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
                 		model.setRowCount( 20 );
                 		db=new DBConn();
-                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'ÔËÓª²¿'");
+                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'è¿è¥éƒ¨'");
                 		break;
                 	}
                     
-                case ÊĞ³¡²¿:
+                case å¸‚åœºéƒ¨:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
                 		model.setRowCount( 20 );
                 		db=new DBConn();
-                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'ÊĞ³¡²¿'");
+                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'å¸‚åœºéƒ¨'");
                 		break;
                 	}
                     
-                case ÎïÁ÷²¿:
+                case ç‰©æµéƒ¨:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
                 		model.setRowCount( 20 );
                 		db=new DBConn();
-                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'ÎïÁ÷²¿'");
+                		db.getRs(table,"SELECT * FROM staffList WHERE department = 'ç‰©æµéƒ¨'");
                 		break;
                 	}
                     
@@ -312,7 +314,7 @@ public class ManageMain extends JFrame{
 		staffPanel.add(cBDpmtSelecct);
 		
 		
-		//²Ù×÷Ãæ°å£¨±í²Ù×÷£©
+		//æ“ä½œé¢æ¿ï¼ˆè¡¨æ“ä½œï¼‰
 		ImagePanel operatingPanel = new ImagePanel("operatingImage.jpg");
 		operatingPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "\u8868\u64CD\u4F5C", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		operatingPanel.setToolTipText("");
@@ -320,12 +322,12 @@ public class ManageMain extends JFrame{
 		staffPanel.add(operatingPanel);
 		operatingPanel.setLayout(null);
 		
-		//±êÇ©£¨±àºÅ£©
+		//æ ‡ç­¾ï¼ˆç¼–å·ï¼‰
 		JLabel labelNum = new JLabel("\u7F16\u53F7\uFF1A");
 		labelNum.setBounds(47, 19, 51, 26);
 		operatingPanel.add(labelNum);
 		
-		//ÎÄ±¾¿ò£¨±àºÅ£©
+		//æ–‡æœ¬æ¡†ï¼ˆç¼–å·ï¼‰
 		pID = new JTextField();
 		pID.setEditable(false);
 		pID.setBounds(96, 20, 52, 24);
@@ -333,57 +335,57 @@ public class ManageMain extends JFrame{
 		pID.setColumns(10);
 		
 		
-		//±êÇ©£¨ĞÕÃû£©
+		//æ ‡ç­¾ï¼ˆå§“åï¼‰
 		JLabel labelName = new JLabel("\u59D3\u540D\uFF1A");
 		labelName.setBounds(192, 19, 51, 26);
 		operatingPanel.add(labelName);
 		
-		//ÎÄ±¾¿ò£¨ĞÕÃû£©
+		//æ–‡æœ¬æ¡†ï¼ˆå§“åï¼‰
 		pName = new JTextField();
 		pName.setBounds(292, 20, 101, 24);
 		operatingPanel.add(pName);
 		pName.setColumns(10);
 		
 		
-		//±êÇ©£¨ĞÔ±ğ£©
+		//æ ‡ç­¾ï¼ˆæ€§åˆ«ï¼‰
 		JLabel labelGender = new JLabel("\u6027\u522B\uFF1A");
 		labelGender.setBounds(444, 23, 72, 18);
 		operatingPanel.add(labelGender);
 		
-		//ÏÂÀ­¿ò£¨ĞÔ±ğ£©
+		//ä¸‹æ‹‰æ¡†ï¼ˆæ€§åˆ«ï¼‰
 		JComboBox<String> cBoxGender = new JComboBox<>();
 		cBoxGender.setModel(new DefaultComboBoxModel<>(new String[] {"\u7537", "\u5973"}));
 		cBoxGender.setBounds(517, 20, 51, 24);
 		operatingPanel.add(cBoxGender);
 		
 		
-		//±êÇ©£¨²¿ÃÅ£©
+		//æ ‡ç­¾ï¼ˆéƒ¨é—¨ï¼‰
 		JLabel labelDepartment = new JLabel("\u90E8\u95E8\uFF1A");
 		labelDepartment.setBounds(444, 61, 51, 18);
 		operatingPanel.add(labelDepartment);
 		
-		//ÏÂÀ­¿ò£¨²¿ÃÅ£©
+		//ä¸‹æ‹‰æ¡†ï¼ˆéƒ¨é—¨ï¼‰
 		JComboBox<Department> cBoxDpmt = new JComboBox<>();
 		cBoxDpmt.setModel(new DefaultComboBoxModel<>(Department.values()));
 		cBoxDpmt.setBounds(517, 58, 72, 24);
 		operatingPanel.add(cBoxDpmt);
 		
 		
-		//±êÇ©£¨»ù±¾¹¤×Ê£©
+		//æ ‡ç­¾ï¼ˆåŸºæœ¬å·¥èµ„ï¼‰
 		JLabel labelWages = new JLabel("\u57FA\u672C\u5DE5\u8D44\uFF1A");
 		labelWages.setBounds(192, 61, 86, 18);
 		operatingPanel.add(labelWages);
 		
-		//ÎÄ±¾¿ò£¨»ù±¾¹¤×Ê£©
+		//æ–‡æœ¬æ¡†ï¼ˆåŸºæœ¬å·¥èµ„ï¼‰
 		pWages = new JTextField();
 		pWages.setBounds(292, 58, 101, 24);
 		operatingPanel.add(pWages);
 		pWages.setColumns(10);
 		
 		
-		//°´Å¥£¨ĞŞ¸Ä£©
+		//æŒ‰é’®ï¼ˆä¿®æ”¹ï¼‰
 		JButton bUpdate = new JButton("\u4FEE\u6539");
-		//ĞŞ¸Ä°´Å¥¼àÌı
+		//ä¿®æ”¹æŒ‰é’®ç›‘å¬
 		bUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String id =pID.getText().toString().trim();
@@ -391,7 +393,7 @@ public class ManageMain extends JFrame{
 				String wages = pWages.getText().toString().trim();
 				String gender=(String) cBoxGender.getSelectedItem();
 				Department department=(Department) cBoxDpmt.getSelectedItem();
-				if(id != null && name !=null && wages !=null && isNumeric(wages) && department != Department.È«²¿) {
+				if(id != null && name !=null && wages !=null && isNumeric(wages) && department != Department.å…¨éƒ¨) {
 					
 					db = new DBConn();
 					db.dosth("UPDATE stafflist SET name = '"+name+"', gender = '"+gender+"', department = '"+department+"', wages = "+wages+" WHERE id = "+id);
@@ -399,7 +401,7 @@ public class ManageMain extends JFrame{
 					db.getRs(table,"SELECT * FROM staffList");
 				}
 				else {
-					JOptionPane.showMessageDialog(null, "ĞŞ¸ÄÊ§°Ü", "ÏûÏ¢", JOptionPane.NO_OPTION);
+					JOptionPane.showMessageDialog(null, "ä¿®æ”¹å¤±è´¥", "æ¶ˆæ¯", JOptionPane.NO_OPTION);
 				}
 				
 			}
@@ -409,24 +411,24 @@ public class ManageMain extends JFrame{
 		operatingPanel.add(bUpdate);
 		
 		
-		//°´Å¥£¨É¾³ı£©
+		//æŒ‰é’®ï¼ˆåˆ é™¤ï¼‰
 		JButton bDelete = new JButton("\u5220\u9664");
-		//É¾³ı°´Å¥¼àÌı
+		//åˆ é™¤æŒ‰é’®ç›‘å¬
 		bDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String id =pID.getText().toString().trim();
 				if(!id.equals("")) {
-					//É¾³ı
+					//åˆ é™¤
 					db = new DBConn();
 					db.dosth("DELETE FROM stafflist WHERE id = "+id);
 					
-					//±ÈÉ¾³ıºÅ´óµÄid×Ô¼õ1
+					//æ¯”åˆ é™¤å·å¤§çš„idè‡ªå‡1
 					db = new DBConn();
 					db.dosth("UPDATE stafflist SET id=id-1 where id >"+id);
 					db = new DBConn();
 					db.dosth("ALTER TABLE stafflist AUTO_INCREMENT = 0");
 					
-					//Ë¢ĞÂ
+					//åˆ·æ–°
 					model.setRowCount( 0 );
             		model.setRowCount( 20 );
 					db = new DBConn();
@@ -434,7 +436,7 @@ public class ManageMain extends JFrame{
 					pID.setText("");
 				}
 				else {
-					JOptionPane.showMessageDialog(null, "É¾³ıÊ§°Ü", "ÏûÏ¢", JOptionPane.OK_OPTION);
+					JOptionPane.showMessageDialog(null, "åˆ é™¤å¤±è´¥", "æ¶ˆæ¯", JOptionPane.OK_OPTION);
 				}
 				
 			}
@@ -452,7 +454,7 @@ public class ManageMain extends JFrame{
 		menuBar.add(menu);
 		
 		JMenuItem mItemStaff = new JMenuItem("\u5458\u5DE5\u82B1\u540D\u518C");
-		//¼àÌı
+		//ç›‘å¬
 		mItemStaff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				card.show(cardPanel, "card_staff");
@@ -503,7 +505,7 @@ public class ManageMain extends JFrame{
 		JMenuItem menuItem_1 = new JMenuItem("\u4E0A\u4E00\u9996");
 		menuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(index>=1) {
+				if(index>=1 && index!= -1) {
 					mp.play(--index);
 				}
 			}
@@ -513,7 +515,7 @@ public class ManageMain extends JFrame{
 		JMenuItem menuItem_2 = new JMenuItem("\u4E0B\u4E00\u9996");
 		menuItem_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(index<=0) {
+				if(index<=0 && index!= -1) {
 					mp.play(++index);
 				}
 			}

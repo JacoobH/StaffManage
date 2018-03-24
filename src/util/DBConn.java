@@ -10,12 +10,12 @@ import java.sql.SQLException;
 
 
 public class DBConn {
-    private String className; //Çı¶¯Ãû
-    private String url; //Á¬½ÓÊı¾İ¿âµÄURLµØÖ·
-    private String username; //Êı¾İ¿âµÄÓÃ»§Ãû
-    private String password; //Êı¾İ¿âµÄÃÜÂë
-    private Connection conn; //Êı¾İ¿âÁ¬½Ó¶ÔÏó
-    private Statement stmt; //Êı¾İ¿âÔ¤±àÒë´¦Àí¶ÔÏó
+    private String className; //é©±åŠ¨å
+    private String url; //è¿æ¥æ•°æ®åº“çš„URLåœ°å€
+    private String username; //æ•°æ®åº“çš„ç”¨æˆ·å
+    private String password; //æ•°æ®åº“çš„å¯†ç 
+    private Connection conn; //æ•°æ®åº“è¿æ¥å¯¹è±¡
+    private Statement stmt; //æ•°æ®åº“é¢„ç¼–è¯‘å¤„ç†å¯¹è±¡
     private ResultSet rs;
     public DBConn(){
         className="com.mysql.jdbc.Driver";
@@ -27,10 +27,10 @@ public class DBConn {
             conn=DriverManager.getConnection(url,username,password);
             stmt = conn.createStatement();    
         }catch(ClassNotFoundException e){
-            System.out.println("¼ÓÔØÊı¾İ¿âÇı¶¯³ÌĞòÊ§°Ü£¡");
+            System.out.println("åŠ è½½æ•°æ®åº“é©±åŠ¨ç¨‹åºå¤±è´¥ï¼");
             e.printStackTrace();
         }catch (SQLException e) {
-            System.out.println("Êı¾İ¿âÁ¬½ÓÊ§°Ü£¡");
+            System.out.println("æ•°æ®åº“è¿æ¥å¤±è´¥ï¼");
             e.printStackTrace();
         }
     }
@@ -45,6 +45,18 @@ public class DBConn {
     		}
     	}
     }
+	
+    public synchronized ResultSet doRs(String sql) {
+    	if(sql!=null && !sql.equals("")) {
+    		try {
+				rs = stmt.executeQuery(sql);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
+    	return rs;
+    }
+	
     public synchronized void getRs(JTable t,String sql) {
     	if(sql!=null && !sql.equals("")) {
     		int i=0;
@@ -76,19 +88,19 @@ public class DBConn {
              if(rs!=null)
                  rs.close();
          }catch(Exception e){
-             System.out.println("¹Ø±Õrs¶ÔÏóÊ§°Ü£¡");
+             System.out.println("å…³é—­rså¯¹è±¡å¤±è´¥ï¼");
          }
         try{
             if(stmt!=null)
                 stmt.close();
         }catch(Exception e){
-            System.out.println("¹Ø±Õstmt¶ÔÏóÊ§°Ü£¡");
+            System.out.println("å…³é—­stmtå¯¹è±¡å¤±è´¥ï¼");
         }
         try{
             if(conn!=null)
                 conn.close();
         }catch(Exception e){
-            System.out.println("¹Ø±Õconn¶ÔÏóÊ§°Ü£¡");
+            System.out.println("å…³é—­connå¯¹è±¡å¤±è´¥ï¼");
         }
     }
 

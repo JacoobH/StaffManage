@@ -138,7 +138,7 @@ public class Login extends JFrame implements ActionListener{
 						});
 						this.dispose();
 					}
-					else if(！sps.equals(rs.getString("password"))) {
+					else if(!sps.equals(rs.getString("password"))) {
 						JOptionPane.showMessageDialog(this, "用户名或密码错误");
 						vcodePanel.updateUI();
 					}

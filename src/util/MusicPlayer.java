@@ -9,7 +9,7 @@ import javazoom.jl.player.advanced.PlaybackListener;
 import java.util.*;
 public class MusicPlayer extends PlaybackListener implements Runnable{
 
-	//汽箭
+	//单例
 	private MusicPlayer(){}
 	private static MusicPlayer mp =new MusicPlayer();
     public static MusicPlayer makePlayer(){
@@ -18,7 +18,7 @@ public class MusicPlayer extends PlaybackListener implements Runnable{
 	
 	private AdvancedPlayer player=null;
 	private List<String> musicList = new ArrayList<>(Arrays.asList(
-			"敏虻誦 (さわの ひろゆき) - eye-water (凛節).mp3",
+			"澤野弘之 (さわの ひろゆき) - eye-water (眼泪).mp3",
 			"Felix Mendelssohn - Auf Flugeln Des Gesanges.mp3"));
 
 	public void play(int index){
@@ -36,7 +36,6 @@ public class MusicPlayer extends PlaybackListener implements Runnable{
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	public void close() {
 		if(player!=null) {

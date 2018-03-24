@@ -35,6 +35,9 @@ public class Login extends JFrame implements ActionListener{
 	private JPasswordField pw;
 	private JButton byes;
 	private JButton bcancel;
+	
+	private DBConn db;
+	private ResultSet rs;
 	/**
 	 * Launch the application.
 	 */
@@ -118,29 +121,51 @@ public class Login extends JFrame implements ActionListener{
 		String sps=new String(pw.getPassword()).trim();
 		String scode=vCode.getText().toString().trim();
 		if(e.getSource()==byes) {
-			if(sname.equals("hy")&&sps.equals("123")&&scode.equals(code)) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							ManageMain frame = new ManageMain();
-							frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+			db = new DBConn();
+			try {
+				rs = db.doRs("SELECT password FROM admin WHERE user = '"+sname+"'");
+				if(rs.next()) {
+					if(sps.equals(rs.getString("password")) && scode.equals(code)) {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									ManageMain frame = new ManageMain();
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+						this.dispose();
 					}
-				});
-				this.dispose();
+					else if(sps.equals(rs.getString("password"))) {
+						JOptionPane.showMessageDialog(this, "用户名或密码错误");
+						vcodePanel.updateUI();
+					}
+						
+					else {
+						JOptionPane.showMessageDialog(this, "验证码错误");
+						vcodePanel.updateUI();
+					}
+						
+				}
+				else {
+					JOptionPane.showMessageDialog(this, "用户名或密码错误");
+					vcodePanel.updateUI();
+				}
+					
+			}catch(SQLException ex) {
+				ex.printStackTrace();
 			}
-			else if(scode.equals(code)){
-				JOptionPane.showMessageDialog(this, "用户名或密码错误");
-				//重绘组件
-				vcodePanel.updateUI();
-			}
-				
-			else {
-				JOptionPane.showMessageDialog(this, "验证码错误");	
-				vcodePanel.updateUI();
-			}
+			finally {
+    				db.closed();
+    				try {
+    				if(rs!=null)
+    					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+    			}
 		}
 	
 		if(e.getSource()==bcancel) {

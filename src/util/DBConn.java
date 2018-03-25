@@ -1,13 +1,11 @@
 package util;
 import java.sql.Connection;
 import java.sql.Statement;
-
 import javax.swing.JTable;
-
+import view.ManageMain;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 
 public class DBConn {
     private String className; //驱动名
@@ -45,18 +43,6 @@ public class DBConn {
     		}
     	}
     }
-	
-    public synchronized ResultSet doRs(String sql) {
-    	if(sql!=null && !sql.equals("")) {
-    		try {
-				rs = stmt.executeQuery(sql);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-    	}
-    	return rs;
-    }
-	
     public synchronized void getRs(JTable t,String sql) {
     	if(sql!=null && !sql.equals("")) {
     		int i=0;
@@ -74,7 +60,9 @@ public class DBConn {
     				t.setValueAt(gender, i, 2);
     				t.setValueAt(department, i, 3);
     				t.setValueAt(wages, i, 4);
-    				i++;
+    				if(i++ >=19) {
+    					ManageMain.model.setRowCount( i+1 );
+    				}
     			}
     		} catch (SQLException e) {
     			e.printStackTrace();
@@ -82,6 +70,16 @@ public class DBConn {
     			closed();
     		}
     	}
+    }
+    public synchronized ResultSet doRs(String sql) {
+    	if(sql!=null && !sql.equals("")) {
+    		try {
+				rs = stmt.executeQuery(sql);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
+    	return rs;
     }
     public void closed(){
     	 try{
@@ -102,9 +100,5 @@ public class DBConn {
         }catch(Exception e){
             System.out.println("关闭conn对象失败！");
         }
-    }
-
-	
-
-    
+    }   
 }

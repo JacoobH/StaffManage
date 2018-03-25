@@ -1,6 +1,5 @@
 package util;
 import java.io.*;
-
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
@@ -41,11 +40,11 @@ public class MusicPlayer extends PlaybackListener implements Runnable{
 	public void close() {
 		if(player!=null) {
 			player.stop();
-			ManageMain.index = -1;
 		}
 	}
 	public void playbackFinished(PlaybackEvent evt) {
 		if(evt.getSource() == player) {
+			ManageMain.index = -1;
 			player.close();
 //			System.out.println("播放完毕");
 		}

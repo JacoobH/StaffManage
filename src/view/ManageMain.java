@@ -442,15 +442,18 @@ public class ManageMain extends JFrame{
 				String wages = pWages.getText().toString().trim();
 				String gender=(String) cBoxGender.getSelectedItem();
 				Department department=(Department) cBoxDpmt.getSelectedItem();
-				if(!id.equals("") && !name.equals("") && !wages.equals("") && isNumeric(wages) && department != Department.全部) {
+				if(!id.equals("") && !name.equals("") && !wages.equals("") && isNumeric(wages) && department != Department.全部 && name.length() < 15) {
 					
 					db = new DBConn();
 					db.dosth("UPDATE stafflist SET name = '"+name+"', gender = '"+gender+"', department = '"+department+"', wages = "+wages+" WHERE id = "+id);
 					db = new DBConn();
 					db.getRs(table,"SELECT * FROM staffList");
 				}
+				else if(name.length() >= 15) {
+					JOptionPane.showMessageDialog(null, "名字最多14位！", "消息", JOptionPane.NO_OPTION);
+				}
 				else {
-					JOptionPane.showMessageDialog(null, "修改失败", "消息", JOptionPane.NO_OPTION);
+					JOptionPane.showMessageDialog(null, "修改失败！", "消息", JOptionPane.NO_OPTION);
 				}
 				
 			}
@@ -603,11 +606,11 @@ public class ManageMain extends JFrame{
 	}
 	
 	public boolean isNumeric(String str){
-        	Pattern pattern = Pattern.compile("[0-9]*");
-        	Matcher isNum = pattern.matcher(str);
-        	if( !isNum.matches() ){
-         	   return false;
-        	}
-        	return true;
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
 	}
 }

@@ -1,5 +1,18 @@
 package view;
-
+/*
+ * 作者注：
+ * 
+ * 此类使用windowbuilder编写
+ * 编写过程中没有考虑代码耦合度问题，
+ * 而其中staffPanel（cardPanel（卡片布局）的其中一张卡片）拥有较多组件和功能，
+ * 没有及时将以staffPanel为首的众多卡片(JPanel)抽象成类
+ * 又因为各种业务逻辑纠缠在一起，后续的抽象工作比较困难
+ * 使代码可读性不高，
+ * 为了提高可读性
+ * 我们使用了menuInit()方法进行菜单初始化,mainInit()进行主菜单初始化
+ * 调用staffInit()进行员工花名册初始化
+ * 
+ * */
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -17,7 +30,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
 import java.awt.CardLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -35,16 +47,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
+import java.awt.Font;
 
 public class ManageMain extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	//内容面板
 	private JPanel contentPane;
-	
+
 	private JTable table;
 	private CardLayout card = new CardLayout();
 	private JPanel cardPanel;
@@ -55,11 +67,13 @@ public class ManageMain extends JFrame{
 	private MusicPlayer mp = MusicPlayer.makePlayer();
 	//当前歌曲编号
 	public static int index = -1;
+	public static int ROW_NUM = 20;
 	
 	private JTextField pID;
 	private JTextField pName;
 	private JTextField pWages;
 	
+	public static DefaultTableModel model;
 	/**
 	 * Launch the application.
 	 */
@@ -103,18 +117,53 @@ public class ManageMain extends JFrame{
 		contentPane.add(cardPanel);
 		cardPanel.setLayout(card);
 		
-		//mainPanel作为第一张卡片（主界面）
-		ImagePanel mainPanel = new ImagePanel("MainImage.jpg");
-		cardPanel.add(mainPanel, "card_main");
-		mainPanel.setLayout(new BorderLayout(0, 0));
+		//mainPanel作为一张卡片（主界面）
+		mainInit();
 		
-		//调用staffPanel()方法设置第二张卡片
+		//调用staffPanel()方法设置卡片
 		staffInit();
 		
-		//attendancePanel作为第三张卡片
+		//管理员账户管理卡片
+		AdminCard adminPanel = new AdminCard();
+		cardPanel.add(adminPanel, "card_admin");
+		
+		//attendancePanel作为卡片
 		AttendancePanel attendancePanel = new AttendancePanel();
 		cardPanel.add(attendancePanel, "card_AttendancePanel");
 	}
+	
+	public void mainInit () {
+		ImagePanel mainPanel = new ImagePanel("MainImage.jpg");
+		cardPanel.add(mainPanel, "card_main");
+		mainPanel.setLayout(null);
+		
+		JLabel currentUser = new JLabel("当前账户："+Login.currentUser);
+		currentUser.setForeground(Color.WHITE);
+		currentUser.setFont(new Font("幼圆", Font.BOLD, 21));
+		currentUser.setBounds(309, 572, 226, 54);
+		mainPanel.add(currentUser);
+		
+		JButton resignButton = new JButton("\u91CD\u65B0\u767B\u9646");
+		resignButton.setFont(new Font("幼圆", Font.PLAIN, 19));
+		resignButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							Login frame = new Login();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				dispose();
+			}
+		});
+		resignButton.setBounds(648, 582, 116, 36);
+		mainPanel.add(resignButton);
+	}
+	
 	public void staffInit() {
 		
 		//初始化staffPanel并作为第二张卡片
@@ -128,7 +177,7 @@ public class ManageMain extends JFrame{
 		tablePanel.setLayout(new BorderLayout(0, 0));
 		//设置JTable的模型
 		String[] title= {"#","姓名","性别","部门","工资","操作"};
-		DefaultTableModel model=new DefaultTableModel(new String[20][6],title);
+		model=new DefaultTableModel(new String[ROW_NUM][6],title);
 		table = new JTable(model);
 		//table监听
 		table.addMouseListener(new MouseAdapter() {
@@ -150,8 +199,8 @@ public class ManageMain extends JFrame{
 		table.setDefaultRenderer(Object.class,   r);
 		//设置JTable行高
 		table.setRowHeight(30);
-		table.getColumnModel().getColumn(5).setCellEditor(new MyRender(table,model));//设置编辑器
-		table.getColumnModel().getColumn(5).setCellRenderer(new MyRender(table,model));//得到列类型，得到指定参数的类，设置渲染器
+		table.getColumnModel().getColumn(5).setCellEditor(new MyRender(table));//设置编辑器
+		table.getColumnModel().getColumn(5).setCellRenderer(new MyRender(table));//得到列类型，得到指定参数的类，设置渲染器
 		//连接数据库
 		db=new DBConn();
 		db.getRs(table,"SELECT * FROM staffList");
@@ -191,7 +240,7 @@ public class ManageMain extends JFrame{
 				if(n==JOptionPane.YES_OPTION){
 					db = new DBConn();
 					model.setRowCount( 0 );
-            		model.setRowCount( 20 );
+            		model.setRowCount( ROW_NUM );
 					db.dosth("DELETE FROM stafflist");
 					//
 					db = new DBConn();
@@ -224,7 +273,7 @@ public class ManageMain extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				String message=selectField.getText().toString().trim();
 				model.setRowCount( 0 );
-                model.setRowCount( 20 );
+                model.setRowCount( ROW_NUM );
                 db=new DBConn();
         		db.getRs(table,"SELECT * FROM staffList WHERE name LIKE "+"'%"+message+"%'");
 			}
@@ -263,7 +312,7 @@ public class ManageMain extends JFrame{
                 case 技术部:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
-                		model.setRowCount( 20 );
+                		model.setRowCount( ROW_NUM );
                 		db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList WHERE department = '技术部'");
                 		break;
@@ -272,7 +321,7 @@ public class ManageMain extends JFrame{
                 case 财政部:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
-                        model.setRowCount( 20 );
+                        model.setRowCount( ROW_NUM );
                         db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList WHERE department = '财政部'");
                         break;
@@ -281,7 +330,7 @@ public class ManageMain extends JFrame{
                 case 运营部:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
-                		model.setRowCount( 20 );
+                		model.setRowCount( ROW_NUM );
                 		db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList WHERE department = '运营部'");
                 		break;
@@ -290,7 +339,7 @@ public class ManageMain extends JFrame{
                 case 市场部:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
-                		model.setRowCount( 20 );
+                		model.setRowCount( ROW_NUM );
                 		db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList WHERE department = '市场部'");
                 		break;
@@ -299,7 +348,7 @@ public class ManageMain extends JFrame{
                 case 物流部:
                 	if(e.getStateChange()==1) {
                 		model.setRowCount( 0 );
-                		model.setRowCount( 20 );
+                		model.setRowCount( ROW_NUM );
                 		db=new DBConn();
                 		db.getRs(table,"SELECT * FROM staffList WHERE department = '物流部'");
                 		break;
@@ -393,7 +442,7 @@ public class ManageMain extends JFrame{
 				String wages = pWages.getText().toString().trim();
 				String gender=(String) cBoxGender.getSelectedItem();
 				Department department=(Department) cBoxDpmt.getSelectedItem();
-				if(id != null && name !=null && wages !=null && isNumeric(wages) && department != Department.全部) {
+				if(!id.equals("") && !name.equals("") && !wages.equals("") && isNumeric(wages) && department != Department.全部) {
 					
 					db = new DBConn();
 					db.dosth("UPDATE stafflist SET name = '"+name+"', gender = '"+gender+"', department = '"+department+"', wages = "+wages+" WHERE id = "+id);
@@ -430,7 +479,7 @@ public class ManageMain extends JFrame{
 					
 					//刷新
 					model.setRowCount( 0 );
-            		model.setRowCount( 20 );
+            		model.setRowCount( ROW_NUM );
 					db = new DBConn();
 					db.getRs(table,"SELECT * FROM staffList");
 					pID.setText("");
@@ -446,6 +495,7 @@ public class ManageMain extends JFrame{
 		operatingPanel.add(bDelete);
 		
 	}
+	
 	public void menuInit() {
 		JMenuBar menuBar = new JMenuBar();
 		contentPane.add(menuBar, BorderLayout.NORTH);
@@ -468,6 +518,14 @@ public class ManageMain extends JFrame{
 				card.show(cardPanel, "card_main");
 			}
 		});
+		
+		JMenuItem mItemManager = new JMenuItem("\u7BA1\u7406\u5458\u8D26\u6237");
+		mItemManager.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				card.show(cardPanel, "card_admin");
+			}
+		});
+		menu.add(mItemManager);
 		menu.add(mItemMain);
 		
 		JMenu menu_1 = new JMenu("\u97F3\u4E50");
@@ -497,7 +555,10 @@ public class ManageMain extends JFrame{
 		JMenuItem menuItem = new JMenuItem("\u7ED3\u675F\u64AD\u653E");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mp.close();
+				if(index != -1) {
+					mp.close();
+				}
+				
 			}
 		});
 		menu_1.add(menuItem);
@@ -540,12 +601,13 @@ public class ManageMain extends JFrame{
 		menu_3.add(menuItem_4);
 
 	}
+	
 	public boolean isNumeric(String str){
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ){
-            return false;
-        }
-        return true;
+        	Pattern pattern = Pattern.compile("[0-9]*");
+        	Matcher isNum = pattern.matcher(str);
+        	if( !isNum.matches() ){
+         	   return false;
+        	}
+        	return true;
 	}
 }

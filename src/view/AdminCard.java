@@ -31,7 +31,7 @@ public class AdminCard extends ImagePanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JTable table;
-	private String[] title= {"µÇÂ¼Ãû","ÃÜÂë"};
+	private String[] title= {"ç™»å½•å","å¯†ç "};
 	private DefaultTableModel model;
 	private DefaultTableCellRenderer r;
 	
@@ -68,7 +68,7 @@ public class AdminCard extends ImagePanel {
 	}
 	
 	public void addPanelInit(){
-		//Ãæ°åÉèÖÃ
+		//é¢æ¿è®¾ç½®
 		addPanel = new JPanel();
 		addPanel.setBackground(Color.WHITE);
 		addPanel.setBorder(new TitledBorder(null, "\u589E\u52A0\u65B0\u7528\u6237", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -102,7 +102,7 @@ public class AdminCard extends ImagePanel {
 		addPanel.add(aRePassword);
 		
 		addButton = new JButton("\u5F55\u5165");
-		//Â¼Èë£¨°´Å¥£©¼àÌı
+		//å½•å…¥ï¼ˆæŒ‰é’®ï¼‰ç›‘å¬
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String suser = aUsername.getText().toString().trim();
@@ -112,13 +112,16 @@ public class AdminCard extends ImagePanel {
 				try {
 					db=new DBConn();
 					rs = db.doRs("SELECT user FROM admin WHERE user = '"+suser+"'");
-					if(!suser.equals("") && !rs.next() && !sps.equals("") && sps.equals(srps)) {
+					if(!suser.equals("") && !rs.next() && !sps.equals("") && sps.equals(srps) && suser.length()<15 && sps.length()<15) {
 						db=new DBConn();
 						db.dosth("INSERT INTO admin VALUES ('"+suser+"','"+sps+"')");
 						reData();
 					}
+					else if(suser.length() >= 15 || sps.length() >= 15) {
+						JOptionPane.showMessageDialog(null, "ç”¨æˆ·å/å¯†ç æœ€å¤š14ä½!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
+					}
 					else
-						JOptionPane.showMessageDialog(null, "Â¼ÈëÊ§°Ü!", "ÏûÏ¢", JOptionPane.OK_CANCEL_OPTION);
+						JOptionPane.showMessageDialog(null, "å½•å…¥å¤±è´¥!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
 				}catch(SQLException ex) {
 					ex.printStackTrace();
 				}finally {
@@ -139,7 +142,7 @@ public class AdminCard extends ImagePanel {
 	
 	public void operationPanelInit() {
 		
-		//Ãæ°åÉèÖÃ
+		//é¢æ¿è®¾ç½®
 		operationPanel = new JPanel();
 		operationPanel.setBackground(Color.WHITE);
 		operationPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "\u64CD\u4F5C\u7528\u6237", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -174,20 +177,23 @@ public class AdminCard extends ImagePanel {
 		operationPanel.add(oRePassword);
 		
 		updateButton = new JButton("\u4FEE\u6539");
-		//ĞŞ¸Ä£¨°´Å¥£©¼àÌı
+		//ä¿®æ”¹ï¼ˆæŒ‰é’®ï¼‰ç›‘å¬
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String suser = oUsername.getText().toString().trim();
 				String sps = new String(oPassword.getPassword()).trim();
 				String srps = new String(oRePassword.getPassword()).trim();
 				
-				if(!suser.equals("") && !sps.equals("") && sps.equals(srps)) {
+				if(!suser.equals("") && !sps.equals("") && sps.equals(srps) && sps.length() < 15) {
 					db = new DBConn();
 					db.dosth("UPDATE admin SET password = '"+sps+"' WHERE user = '"+suser+"'");
 					reData();
 				}
+				else if(sps.length() >= 15) {
+					JOptionPane.showMessageDialog(null, "å¯†ç æœ€å¤š14ä½!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
+				}
 				else
-					JOptionPane.showMessageDialog(null, "ĞŞ¸ÄÊ§°Ü!", "ÏûÏ¢", JOptionPane.OK_CANCEL_OPTION);
+					JOptionPane.showMessageDialog(null, "ä¿®æ”¹å¤±è´¥!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
 			}
 		});
 		updateButton.setBounds(76, 247, 113, 27);
@@ -198,7 +204,7 @@ public class AdminCard extends ImagePanel {
 			public void actionPerformed(ActionEvent e) {
 				String suser = oUsername.getText().toString().trim();
 				
-				if(!suser.equals("")){
+				if(!suser.equals("") && !suser.equals(Login.currentUser)){
 					db = new DBConn();
 					db.dosth("DELETE FROM admin WHERE user = '"+suser+"'");
 					model.setRowCount(0);
@@ -206,8 +212,11 @@ public class AdminCard extends ImagePanel {
 					reData();
 					oUsername.setText(null);
 				}
+				else if(suser.equals(Login.currentUser)) {
+					JOptionPane.showMessageDialog(null, "ä¸èƒ½åˆ é™¤å½“å‰è´¦æˆ·!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
+				}
 				else
-					JOptionPane.showMessageDialog(null, "É¾³ıÊ§°Ü!", "ÏûÏ¢", JOptionPane.OK_CANCEL_OPTION);
+					JOptionPane.showMessageDialog(null, "åˆ é™¤å¤±è´¥!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
 			}
 		});
 		deleteButton.setBounds(234, 246, 113, 27);
@@ -215,15 +224,15 @@ public class AdminCard extends ImagePanel {
 	}
 	
 	public void tableInit() {
-		//³õÊ¼»¯±í¸ñ
+		//åˆå§‹åŒ–è¡¨æ ¼
 		model= new DefaultTableModel(new String[ManageMain.ROW_NUM][2],title);
 		table= new JTable();
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				//ÅĞ¶ÏÊÇ·ñÓĞÊı¾İ
+				//åˆ¤æ–­æ˜¯å¦æœ‰æ•°æ®
 				if(table.getValueAt(table.getSelectedRow(), 0) != null ) {
-					//½«Ñ¡ÖĞĞĞµÄidÖµ¸³¸ø pID
+					//å°†é€‰ä¸­è¡Œçš„idå€¼èµ‹ç»™ pID
 					oUsername.setText(table.getValueAt(table.getSelectedRow(), 0).toString());
 				}
 				else
@@ -232,15 +241,15 @@ public class AdminCard extends ImagePanel {
 		});
 		table.setModel(model);
 		table.setRowHeight(30);
-		//ÉèÖÃJTableÄÚÈİ¾ÓÖĞ
+		//è®¾ç½®JTableå†…å®¹å±…ä¸­
 		r = new   DefaultTableCellRenderer();   
 		r.setHorizontalAlignment(JLabel.CENTER);   
 		table.setDefaultRenderer(Object.class, r);
-		//³õÊ¼»¯¹ö¶¯ÌõÃæ°å²¢½«±í¸ñ·ÅÈëÆäÖĞ
+		//åˆå§‹åŒ–æ»šåŠ¨æ¡é¢æ¿å¹¶å°†è¡¨æ ¼æ”¾å…¥å…¶ä¸­
 		tableScrollPane = new JScrollPane(table);
 		tableScrollPane.setBounds(106, 73, 319, 541);
 		add(tableScrollPane);
-		//µÃµ½Êı¾İ¿âÊı¾İ
+		//å¾—åˆ°æ•°æ®åº“æ•°æ®
 		reData();
 	}
 	

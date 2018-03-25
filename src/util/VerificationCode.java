@@ -24,19 +24,21 @@ public class VerificationCode extends JPanel{
 		int width = 80;  
         int height = 40;  
         int lines = 10;
-		// ÉèÖÃ±³¾°É«  
+        Login.code="";
+        
+		// è®¾ç½®èƒŒæ™¯è‰²  
         g.setColor(Color.WHITE);  
         g.fillRect(0, 0, width, height);  
   
-        // ÉèÖÃ×ÖÌå  
-        g.setFont(new Font("ËÎÌå", Font.BOLD, 20));  
+        // è®¾ç½®å­—ä½“  
+        g.setFont(new Font("å®‹ä½“", Font.BOLD, 20));  
   
-        // Ëæ»úÊı×Ö  
+        // éšæœºæ•°å­—  
         Random r = new Random(new Date().getTime());  
         for (int i = 0; i < 4; i++) {  
             int a = r.nextInt(10);  
             Login.code+=a;
-            int y = 10 + r.nextInt(20);// 10~30·¶Î§ÄÚµÄÒ»¸öÕûÊı£¬×÷Îªy×ø±ê  
+            int y = 10 + r.nextInt(20);// 10~30èŒƒå›´å†…çš„ä¸€ä¸ªæ•´æ•°ï¼Œä½œä¸ºyåæ ‡  
   
             Color c = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));  
             g.setColor(c);  
@@ -44,7 +46,7 @@ public class VerificationCode extends JPanel{
             g.drawString("" + a, 5 + i * width / 4, y);  
         }  
   
-        // ¸ÉÈÅÏß  
+        // å¹²æ‰°çº¿  
         for (int i = 0; i < lines; i++) {  
             Color c = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));  
             g.setColor(c);  

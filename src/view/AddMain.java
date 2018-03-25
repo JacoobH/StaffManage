@@ -1,11 +1,9 @@
 package view;
 
-import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -14,7 +12,6 @@ import javax.swing.DefaultComboBoxModel;
 import util.DBConn;
 import util.Department;
 import util.mid;
-
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.regex.Matcher;
@@ -47,7 +44,6 @@ public class AddMain extends JFrame{
 //			}
 //		});
 //	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -86,23 +82,20 @@ public class AddMain extends JFrame{
 				String wages = pWages.getText().toString().trim();
 				String gender=(String) cBoxGender.getSelectedItem();
 				Department department=(Department) cBoxDpmt.getSelectedItem();
-//				System.out.println(name);
-//				System.out.println(gender);
-//				System.out.println(department);
-//				System.out.println(wages);
-				if(department != Department.È«²¿ && isNumeric(wages)) {
-//					db = new DBConn();
-//					db.dosth("ALTER TABLE stafflist AUTO_INCREMENT = (SELECT MAX(id) FROM stafflist)");
+				if(department != Department.å…¨éƒ¨ && isNumeric(wages) && name.length()<15) {
 					db = new DBConn();
 					db.dosth("INSERT INTO stafflist(name,gender,department,wages) VALUES ('"+name+"','"+gender+"','"+department+"',"+wages+")");
 					db = new DBConn();
 					db.getRs(table,"SELECT * FROM staffList");
 				}
+				else if(name.length()>=15) {
+					JOptionPane.showMessageDialog(null, "å§“åæœ€å¤š14ä½!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
+				}
 				else if(!isNumeric(wages)) {
-					JOptionPane.showMessageDialog(null, "¹¤×ÊÖ»ÄÜÎªÊı×Ö!", "ÏûÏ¢", JOptionPane.OK_CANCEL_OPTION);
+					JOptionPane.showMessageDialog(null, "å·¥èµ„åªèƒ½ä¸ºæ•°å­—!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
 				}
 				else {
-					JOptionPane.showMessageDialog(null, "ÇëÑ¡Ôñ²¿ÃÅ!", "ÏûÏ¢", JOptionPane.OK_CANCEL_OPTION);
+					JOptionPane.showMessageDialog(null, "è¯·é€‰æ‹©éƒ¨é—¨!", "æ¶ˆæ¯", JOptionPane.OK_CANCEL_OPTION);
 				}
 			}
 		});

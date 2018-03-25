@@ -3,6 +3,8 @@ package view;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.border.EmptyBorder;
+
+import util.DBConn;
 import util.ImagePanel;
 import util.VerificationCode;
 import util.mid;
@@ -13,7 +15,11 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 
@@ -38,6 +44,8 @@ public class Login extends JFrame implements ActionListener{
 	
 	private DBConn db;
 	private ResultSet rs;
+	
+	public static String currentUser="";
 	/**
 	 * Launch the application.
 	 */
@@ -61,6 +69,7 @@ public class Login extends JFrame implements ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 328);
 		new mid(this);
+		setResizable(false);
 		contentPane = new ImagePanel("LoginImage.jpg");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -90,10 +99,10 @@ public class Login extends JFrame implements ActionListener{
 		
 		vcodePanel = new VerificationCode();
 		vcodePanel.setBounds(258, 159, 80, 40);
-		//动态加入组件
 		SwingUtilities.invokeLater(()->{
 			contentPane.add(vcodePanel);
 		});
+		
 		
 		vCode = new JTextField();
 		vCode.setColumns(10);
@@ -126,6 +135,7 @@ public class Login extends JFrame implements ActionListener{
 				rs = db.doRs("SELECT password FROM admin WHERE user = '"+sname+"'");
 				if(rs.next()) {
 					if(sps.equals(rs.getString("password")) && scode.equals(code)) {
+						currentUser = sname;
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
@@ -146,26 +156,25 @@ public class Login extends JFrame implements ActionListener{
 					else {
 						JOptionPane.showMessageDialog(this, "验证码错误");
 						vcodePanel.updateUI();
-					}
-						
+					}	
 				}
 				else {
 					JOptionPane.showMessageDialog(this, "用户名或密码错误");
 					vcodePanel.updateUI();
 				}
-					
+				
 			}catch(SQLException ex) {
 				ex.printStackTrace();
 			}
 			finally {
-    				db.closed();
-    				try {
+    			db.closed();
+    			try {
     				if(rs!=null)
     					rs.close();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-    			}
+    		}
 		}
 	
 		if(e.getSource()==bcancel) {
